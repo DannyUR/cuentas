@@ -11,10 +11,13 @@ class Account extends Model {
     protected $fillable = ['name', 'ammount', 'status', 'user_id'];
 
     public function user() {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class,'id','user_id');        
+        //return $this->belongsTo(User::class);
     }
 
     public function transactions() {
         return $this->hasMany(Transaction::class);
     }
+
+
 }
