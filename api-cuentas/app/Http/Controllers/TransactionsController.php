@@ -33,7 +33,21 @@ class TransactionsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name'=>'required|string|min:2',
+            'ammount'=>'required|numeric',
+            'type'=>'required|string|min:2',
+            'description'=>'required',
+            'user_id'=>'required',
+            'category_id'=>'required',
+            'account_id'=>'required',
+        ]);
+        $data = Transaction::create($validated);
+        return response()->json([
+            "status"=>"ok",
+            "message"=>"Dato insertado correctamente",
+            "data"=>$data
+        ]);
     }
 
     /**
@@ -41,7 +55,18 @@ class TransactionsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = Transaction::find($id);
+        if($data){
+            return response()->json([
+                "status"=>"ok",
+                "message"=>"Cuenta encontrada",
+                "data"=> $data
+            ],200); 
+        }
+        return response()->json([
+            "status"=>"error",
+            "message"=>"Cuenta no encontrada",
+        ],400);
     }
 
     /**
@@ -57,7 +82,24 @@ class TransactionsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name'=>'required|string|min:2',
+            'ammount'=>'required|numeric',
+            'type'=>'required|string|min:2',
+            'description'=>'required',
+            'user_id'=>'required',
+            'category_id'=>'required',
+            'account_id'=>'required',
+        ]);
+        $data = Transaction::findOrFail($id);
+        $data -> update($validated);
+
+        //$data = Account::create($validated);
+        return response()->json([
+            "status"=>"ok",
+            "message"=>"Dato actualizado correctamente",
+            "data"=>$data
+        ]);
     }
 
     /**
@@ -65,6 +107,27 @@ class TransactionsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $data = Transaction::find($id);
+        if($data){
+            $data->delete();
+        }
+        return response()->json([
+            "status"=>"ok",
+            "message"=>"Dato eliminado correctamente",
+        ]);
+    }
+
+        public function changeStatus(Request $request){
+        $data = Transaction::find($request->id);
+        if($data){
+            $data->status=$request->status;
+            $data->save();
+        }
+        return response()->json([
+            "status"=>"ok",
+            "message"=>"Dato actualizado correctamente",
+            "data"=>$data
+        ]);
+
     }
 }
