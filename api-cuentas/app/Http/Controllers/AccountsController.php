@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Account;
+use Illuminate\Support\Facades\Auth;
 
 class AccountsController extends Controller
 {
@@ -18,7 +19,9 @@ class AccountsController extends Controller
         )->join('users',"accounts.user_id","=","users.id")
         ->get();*/
 
-        $data = Account::with(['user'])->get();
+        $data = Account::with(['user'])
+        ->where("user_id",Auth::user()->id)
+        ->get();
         return response()->json([
             "status"=>"ok",
             "data"=>$data
@@ -42,8 +45,8 @@ class AccountsController extends Controller
             'name'=>'required|string|min:2',
             'ammount'=>'required|numeric',
             'status'=>'required',
-            'user_id'=>'required',
         ]);
+        $validated['user_id']=Auth::user()->id;
         $data = Account::create($validated);
         return response()->json([
             "status"=>"ok",
